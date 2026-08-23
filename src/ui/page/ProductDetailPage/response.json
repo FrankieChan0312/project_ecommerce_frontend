@@ -1,0 +1,8 @@
+{
+  "description": "From New Zealand",
+  "imageUrl": "https://project-image-bucket-2026.s3.ap-southeast-1.amazonaws.com/Milk_1.png",
+  "name": "紐西蘭安佳牛奶",
+  "pid": 3,
+  "price": 25.00,
+  "stock": 500
+}

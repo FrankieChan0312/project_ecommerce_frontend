@@ -1,0 +1,185 @@
+:root {
+  /* =========================
+     Frankie's Grocery Theme
+     ========================= */
+
+  /* Main brand colours */
+  --grocery-yellow: #F9F930;
+  --grocery-olive-dark: #717147;
+  --grocery-olive: #78784D;
+  --grocery-light-green: #BBCC7C;
+  --grocery-muted-green: #AEB980;
+  --grocery-dark: #2C2F0D;
+  --grocery-brown: #57462E;
+  --grocery-green: #67803A;
+
+  /* Neutral colours */
+  --grocery-white: #FFFFFF;
+  --grocery-background: #F8F8F3;
+  --grocery-border: #E2E4D5;
+
+  /* Text */
+  --grocery-text: #2C2F0D;
+  --grocery-text-muted: #717147;
+
+  /* UI */
+  --grocery-radius: 12px;
+  --grocery-shadow:
+          0 4px 16px rgba(44, 47, 13, 0.08);
+
+  font-family:
+          Inter,
+          "Noto Sans TC",
+          "Microsoft JhengHei",
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+
+  color: var(--grocery-text);
+  background-color: var(--grocery-background);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* =========================
+   Global
+   ========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background-color: var(--grocery-background);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+
+  color: var(--grocery-text);
+  background-color: var(--grocery-background);
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+
+/* =========================
+   Typography
+   ========================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--grocery-dark);
+  font-weight: 700;
+}
+
+p {
+  color: var(--grocery-text);
+}
+
+a {
+  color: var(--grocery-green);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--grocery-dark);
+}
+
+
+/* =========================
+   Bootstrap overrides
+   ========================= */
+
+.btn-grocery-primary {
+  color: var(--grocery-white);
+  background-color: var(--grocery-green);
+  border-color: var(--grocery-green);
+}
+
+.btn-grocery-primary:hover,
+.btn-grocery-primary:focus {
+  color: var(--grocery-white);
+  background-color: var(--grocery-dark);
+  border-color: var(--grocery-dark);
+}
+
+.btn-grocery-outline {
+  color: var(--grocery-green);
+  background-color: transparent;
+  border-color: var(--grocery-green);
+}
+
+.btn-grocery-outline:hover {
+  color: var(--grocery-white);
+  background-color: var(--grocery-green);
+  border-color: var(--grocery-green);
+}
+
+
+/* =========================
+   Reusable surfaces
+   ========================= */
+
+.grocery-card {
+  background-color: var(--grocery-white);
+  border: 1px solid var(--grocery-border);
+  border-radius: var(--grocery-radius);
+  box-shadow: var(--grocery-shadow);
+}
+
+.grocery-section {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+
+/* =========================
+   Highlight / Promotion
+   ========================= */
+
+.grocery-highlight {
+  color: var(--grocery-dark);
+  background-color: var(--grocery-yellow);
+}
+
+.grocery-category-label {
+  color: var(--grocery-dark);
+  background-color: var(--grocery-light-green);
+}
+
+
+/* =========================
+   Form
+   ========================= */
+
+.form-control:focus {
+  border-color: var(--grocery-green);
+  box-shadow: 0 0 0 0.2rem rgba(103, 128, 58, 0.18);
+}
+
+
+/* =========================
+   Selection
+   ========================= */
+
+::selection {
+  color: var(--grocery-dark);
+  background-color: var(--grocery-yellow);
+}

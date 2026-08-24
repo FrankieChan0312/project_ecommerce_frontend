@@ -1,0 +1,219 @@
+/* =========================
+   Promotion Bar
+   ========================= */
+
+.grocery-promo-bar {
+    background-color: var(--grocery-dark);
+    color: var(--grocery-yellow);
+
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+
+    padding: 7px 16px;
+    letter-spacing: 0.3px;
+}
+
+
+/* =========================
+   Main Navbar
+   ========================= */
+
+.grocery-navbar {
+    min-height: 76px;
+
+    background-color: var(--grocery-dark);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.grocery-brand {
+    color: var(--grocery-white) !important;
+
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+}
+
+.grocery-brand:hover {
+    color: var(--grocery-yellow) !important;
+}
+
+
+/* =========================
+   Search Bar
+   ========================= */
+
+.grocery-search-form {
+    width: 100%;
+}
+
+.grocery-search-wrapper {
+    position: relative;
+
+    width: 100%;
+    max-width: 620px;
+}
+
+.grocery-search-icon {
+    position: absolute;
+
+    top: 50%;
+    left: 1rem;
+
+    z-index: 2;
+
+    color: var(--grocery-olive-dark);
+
+    transform: translateY(-50%);
+}
+
+.grocery-search-input {
+    min-height: 46px;
+
+    padding-left: 2.75rem;
+    padding-right: 1rem;
+
+    border: 2px solid transparent;
+    border-radius: 999px;
+
+    background-color: var(--grocery-white);
+}
+
+.grocery-search-input::placeholder {
+    color: var(--grocery-olive-dark);
+    opacity: 0.75;
+}
+
+.grocery-search-input:focus {
+    border-color: var(--grocery-light-green);
+
+    box-shadow:
+            0 0 0 0.2rem rgba(187, 204, 124, 0.22);
+}
+
+
+/* =========================
+   Navbar Actions
+   ========================= */
+
+.grocery-navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.grocery-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    padding: 0;
+
+    color: var(--grocery-white);
+    background-color: transparent;
+
+    border: 1px solid var(--grocery-olive);
+    border-radius: 50%;
+}
+
+.grocery-icon-button:hover,
+.grocery-icon-button:focus {
+    color: var(--grocery-dark);
+    background-color: var(--grocery-yellow);
+    border-color: var(--grocery-yellow);
+}
+
+.grocery-login-link {
+    padding: 0.55rem 1rem;
+
+    color: var(--grocery-dark);
+    background-color: var(--grocery-yellow);
+
+    border-radius: 999px;
+
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.grocery-login-link:hover {
+    color: var(--grocery-white);
+    background-color: var(--grocery-green);
+}
+
+.grocery-logout-button {
+    min-height: 42px;
+
+    color: var(--grocery-white);
+    background-color: var(--grocery-green);
+
+    border-color: var(--grocery-green);
+    border-radius: 999px;
+}
+
+.grocery-logout-button:hover {
+    color: var(--grocery-dark);
+    background-color: var(--grocery-yellow);
+    border-color: var(--grocery-yellow);
+}
+
+.grocery-user-email {
+    max-width: 180px;
+
+    color: var(--grocery-light-green);
+
+    font-size: 0.85rem;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* =========================
+   Bootstrap Navbar Toggle
+   ========================= */
+
+.grocery-navbar .navbar-toggler {
+    border-color: var(--grocery-muted-green);
+}
+
+.grocery-navbar .navbar-toggler:focus {
+    box-shadow:
+            0 0 0 0.2rem rgba(187, 204, 124, 0.25);
+}
+
+
+/* =========================
+   Responsive
+   ========================= */
+
+@media (min-width: 992px) {
+
+    .grocery-search-form {
+        flex: 1;
+    }
+
+    .grocery-search-wrapper {
+        margin-inline: auto;
+    }
+}
+
+@media (max-width: 991.98px) {
+
+    .grocery-navbar {
+        padding-top: 0.8rem;
+        padding-bottom: 0.8rem;
+    }
+
+    .grocery-search-wrapper {
+        max-width: none;
+    }
+
+    .grocery-navbar-actions {
+        padding-bottom: 0.5rem;
+    }
+}

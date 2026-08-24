@@ -3,13 +3,26 @@ import type {GetAllProductDto, ProductDetailDto} from "../data/product/product.t
 
 export const baseUrl ="http://localhost:8080";
 
-export async function getAllProduct() {
-  const response = await axios.get<GetAllProductDto[]>(
-      `${baseUrl}/public/products`
-  );
-  return response.data;
+export async function getAllProduct(
+    categoryId?: number,
+    keyword?: string
+) {
 
-}export async function getProductByPid(pid:string) {
+  const response =
+      await axios.get<GetAllProductDto[]>(
+          `${baseUrl}/public/products`,
+          {
+            params: {
+              categoryId,
+              keyword: keyword || undefined
+            }
+          }
+      );
+
+  return response.data;
+}
+
+export async function getProductByPid(pid:string) {
   const response = await axios.get<ProductDetailDto>(
       `${baseUrl}/public/products/${pid}`
   );

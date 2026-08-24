@@ -4,12 +4,12 @@
      ========================= */
 
   /* Main brand colours */
-  --grocery-yellow: #F9F930;
+  --grocery-yellow: #dbe1cc;
   --grocery-olive-dark: #717147;
   --grocery-olive: #78784D;
   --grocery-light-green: #BBCC7C;
   --grocery-muted-green: #AEB980;
-  --grocery-dark: #2C2F0D;
+  --grocery-dark: #546134;
   --grocery-brown: #57462E;
   --grocery-green: #67803A;
 
@@ -182,4 +182,197 @@ a:hover {
 ::selection {
   color: var(--grocery-dark);
   background-color: var(--grocery-yellow);
+}
+
+/* =========================
+   Top promotion bar
+   ========================= */
+
+.grocery-promo-bar {
+  padding: 0.45rem 1rem;
+
+  color: var(--grocery-dark);
+  background-color: var(--grocery-yellow);
+
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+
+/* =========================
+   Main Navbar
+   ========================= */
+
+.grocery-navbar {
+  min-height: 76px;
+
+  background-color: var(--grocery-dark);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.grocery-brand {
+  margin: 0;
+
+  color: var(--grocery-white) !important;
+
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.grocery-navbar-toggle {
+  border-color: var(--grocery-muted-green);
+}
+
+.grocery-navbar-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(187, 204, 124, 0.25);
+}
+
+
+/* =========================
+   Search
+   ========================= */
+
+.grocery-search-form {
+  width: 100%;
+}
+
+.grocery-search-wrapper {
+  position: relative;
+
+  width: 100%;
+  max-width: 620px;
+}
+
+.grocery-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+
+  z-index: 2;
+
+  color: var(--grocery-olive-dark);
+
+  transform: translateY(-50%);
+}
+
+.grocery-search-input {
+  min-height: 46px;
+
+  padding-left: 2.75rem;
+  padding-right: 1rem;
+
+  border: 2px solid transparent;
+  border-radius: 999px;
+
+  background-color: var(--grocery-white);
+}
+
+.grocery-search-input::placeholder {
+  color: var(--grocery-olive-dark);
+  opacity: 0.75;
+}
+
+.grocery-search-input:focus {
+  border-color: var(--grocery-light-green);
+
+  box-shadow:
+          0 0 0 0.2rem rgba(187, 204, 124, 0.22);
+}
+
+
+/* =========================
+   Navbar action buttons
+   ========================= */
+
+.grocery-icon-button {
+  min-width: 42px;
+  min-height: 42px;
+
+  color: var(--grocery-white);
+  background-color: transparent;
+
+  border: 1px solid var(--grocery-olive);
+  border-radius: 50%;
+}
+
+.grocery-icon-button:hover,
+.grocery-icon-button:focus {
+  color: var(--grocery-dark);
+  background-color: var(--grocery-yellow);
+  border-color: var(--grocery-yellow);
+}
+
+.grocery-login-button {
+  min-height: 42px;
+
+  color: var(--grocery-dark);
+  background-color: var(--grocery-yellow);
+
+  border-color: var(--grocery-yellow);
+  border-radius: 999px;
+
+  font-weight: 700;
+}
+
+.grocery-login-button:hover {
+  color: var(--grocery-white);
+  background-color: var(--grocery-green);
+  border-color: var(--grocery-green);
+}
+
+.grocery-logout-button {
+  min-height: 42px;
+
+  color: var(--grocery-white);
+  background-color: var(--grocery-green);
+
+  border-color: var(--grocery-green);
+  border-radius: 999px;
+}
+
+.grocery-logout-button:hover {
+  color: var(--grocery-dark);
+  background-color: var(--grocery-yellow);
+  border-color: var(--grocery-yellow);
+}
+
+.grocery-user-email {
+  max-width: 190px;
+
+  color: var(--grocery-light-green);
+
+  font-size: 0.85rem;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* =========================
+   Navbar responsive
+   ========================= */
+
+@media (min-width: 992px) {
+  .grocery-search-form {
+    flex: 1;
+  }
+
+  .grocery-search-wrapper {
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .grocery-navbar {
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+  }
+
+  .grocery-search-wrapper {
+    max-width: none;
+  }
 }

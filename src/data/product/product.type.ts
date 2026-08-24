@@ -1,16 +1,24 @@
 export interface GetAllProductDto {
-  hasStock: boolean;
-  imageUrl: string;
-  name: string;
   pid: number;
+  name: string;
+  imageUrl: string;
   price: number;
+  hasStock: boolean;
+
+  categoryId: number | null;
+  categoryName: string | null;
+  origin: string | null;
 }
 
 export interface ProductDetailDto {
+  pid: number;
+  name: string;
   description: string;
-  imageUrl:    string;
-  name:        string;
-  pid:         number;
-  price:       number;
-  stock:       number;
+  imageUrl: string;
+  price: number;
+  stock: number;
+
+  categoryId: number | null;
+  categoryName: string | null;
+  origin: string | null;
 }

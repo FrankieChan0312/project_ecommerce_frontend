@@ -1,0 +1,23 @@
+[
+  {
+    "hasStock": true,
+    "imageUrl": "https://project-image-bucket-2026.s3.ap-southeast-1.amazonaws.com/pigeon.jpg",
+    "name": "法蘭西冰鮮黃油雞",
+    "pid": 1,
+    "price": 129.00
+  },
+  {
+    "hasStock": true,
+    "imageUrl": "https://project-image-bucket-2026.s3.ap-southeast-1.amazonaws.com/Fish_Pokemon.png",
+    "name": "刺身級挪威三文魚",
+    "pid": 2,
+    "price": 80.00
+  },
+  {
+    "hasStock": true,
+    "imageUrl": "https://project-image-bucket-2026.s3.ap-southeast-1.amazonaws.com/Milk_3.png",
+    "name": "紐西蘭安佳牛奶",
+    "pid": 3,
+    "price": 25.00
+  }
+]

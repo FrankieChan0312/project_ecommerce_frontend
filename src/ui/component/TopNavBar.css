@@ -217,3 +217,48 @@
         padding-bottom: 0.5rem;
     }
 }
+
+/* =========================
+   Shopping Cart Badge
+   ========================= */
+
+.grocery-cart-icon-wrapper {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.grocery-cart-badge {
+    position: absolute;
+
+    top: -11px;
+    right: -14px;
+
+    min-width: 20px;
+    height: 20px;
+
+    padding: 0 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color:
+            var(--grocery-yellow);
+
+    color:
+            var(--grocery-dark);
+
+    border: 2px solid #ffffff;
+    border-radius: 999px;
+
+    font-size: 0.68rem;
+    font-weight: 800;
+
+    line-height: 1;
+
+    pointer-events: none;
+}

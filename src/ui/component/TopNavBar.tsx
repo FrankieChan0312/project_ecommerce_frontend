@@ -8,7 +8,7 @@ import {
 
 import {Link} from "@tanstack/react-router";
 import {useContext} from "react";
-
+import {CartContext} from "../../context/CartContext.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
   faCartShopping,
@@ -29,13 +29,17 @@ interface Props {
 
 export default function TopNavBar({
                                     searchKeyword = "",
-                                    onSearch = () => {},
+                                    onSearch = () => {
+                                    },
                                     showSearch = true,
                                     showFavorite = true
                                   }: Props) {
 
   const loginUser = useContext(LoginUserContext);
+  const cartContext = useContext(CartContext);
 
+  const cartItemCount =
+      cartContext?.cartItemCount ?? 0;
 
   const renderLoginContainer = () => {
 
@@ -64,12 +68,27 @@ export default function TopNavBar({
             <Link
                 to="/shoppingcart"
                 className="grocery-icon-button"
-                aria-label="購物車"
+                aria-label={`購物車，共 ${cartItemCount} 件商品`}
                 title="購物車"
             >
-              <FontAwesomeIcon icon={faCartShopping}/>
-            </Link>
+              <div className="grocery-cart-icon-wrapper">
 
+                <FontAwesomeIcon icon={faCartShopping}/>
+
+                {
+                    cartItemCount > 0 && (
+                        <span className="grocery-cart-badge">
+            {
+              cartItemCount > 99
+                  ? "99+"
+                  : cartItemCount
+            }
+          </span>
+                    )
+                }
+
+              </div>
+            </Link>
             <Button
                 className="grocery-logout-button"
                 onClick={() => {
@@ -103,19 +122,33 @@ export default function TopNavBar({
             <Link
                 to="/shoppingcart"
                 className="grocery-icon-button"
-                aria-label="購物車"
+                aria-label={`購物車，共 ${cartItemCount} 件商品`}
                 title="購物車"
             >
-              <FontAwesomeIcon icon={faCartShopping}/>
-            </Link>
+              <div className="grocery-cart-icon-wrapper">
 
+                <FontAwesomeIcon icon={faCartShopping}/>
+
+                {
+                    cartItemCount > 0 && (
+                        <span className="grocery-cart-badge">
+            {
+              cartItemCount > 99
+                  ? "99+"
+                  : cartItemCount
+            }
+          </span>
+                    )
+                }
+
+              </div>
+            </Link>
             <Link
                 to="/login"
                 className="grocery-login-link"
             >
               Login
             </Link>
-
           </div>
       );
 

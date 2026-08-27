@@ -1,77 +1,439 @@
+// import TopNavBar from "../../component/TopNavBar.tsx";
+// import {Alert, Button, Container, Form} from "react-bootstrap";
+// import {signInWithEmailAndPassword, signInWithGoogle} from "../../../authService/firebaseAuthService.ts";
+// import {useContext, useEffect, useState} from "react";
+// import {useNavigate, useRouter} from "@tanstack/react-router";
+// import {LoginUserContext} from "../../../context/LoginUserContext.tsx";
+// import {GoogleLoginButton} from "react-social-login-buttons";
+//
+// export default function LoginPage() {
+//   const router = useRouter();
+//   const navigate = useNavigate({from:"/login/"});
+//   const loginUser = useContext(LoginUserContext)
+//
+//   const [isLogining, setIsLogining] = useState(false);
+//   const [isLoginFailed, setIsLoginFailed] = useState(false);
+//
+//   const handleEmailAndPasswordLogin = async (event: React.SubmitEvent<HTMLFormElement>) => {
+//     event.preventDefault();
+//     setIsLogining(true);
+//
+//     const target = event.target as typeof event.target & {
+//       email: { value: string };
+//       password: { value: string };
+//     };
+//     const email = target.email.value; // typechecks!
+//     const password = target.password.value; // typechecks!
+//     const loginResult = await signInWithEmailAndPassword(email, password);
+//     if (loginResult) {
+//       router.history.back();
+//     } else {
+//       setIsLoginFailed(true);
+//       setIsLogining(false);
+//
+//       console.log(loginResult);
+//     }
+//   }
+//
+//   const handleGoogleSignIn= ()=>{
+//     void signInWithGoogle()
+//   }
+//
+//   useEffect(() => {
+//     if(loginUser){
+//       void navigate({to:"/"});
+//     }
+//   },[loginUser]);
+//   return (
+//       <>
+//         <TopNavBar/>
+//         <Container>
+//           <Form onSubmit={handleEmailAndPasswordLogin}>
+//             {
+//               isLoginFailed &&
+//               <Alert variant="danger">
+//                 Invalid email or password!
+//               </Alert>
+//             }
+//
+//             < Form.Group className="mb-3" controlId="formBasicEmail">
+//               <Form.Label>Email address</Form.Label>
+//               <Form.Control type="email" placeholder="Enter email" name="email"/>
+//             </Form.Group>
+//
+//             <Form.Group className="mb-3" controlId="formBasicPassword">
+//               <Form.Label>Password</Form.Label>
+//               <Form.Control type="password" placeholder="Password" name="password"/>
+//             </Form.Group>
+//
+//             <Button variant="primary" type="submit" className={"w-100"} disabled={isLogining}>
+//               Login
+//             </Button>
+//           </Form>
+//           <GoogleLoginButton onClick={handleGoogleSignIn}/>
+//         </Container>
+//       </>
+//   )
+// }
+
+import {
+  Alert,
+  Button,
+  Container,
+    Carousel,
+  Form,
+  Spinner
+} from "react-bootstrap";
+
+import {
+  useContext,
+  useEffect,
+  useState
+} from "react";
+
+import {
+  useNavigate,
+  useRouter
+} from "@tanstack/react-router";
+
+import {
+  GoogleLoginButton
+} from "react-social-login-buttons";
+
 import TopNavBar from "../../component/TopNavBar.tsx";
-import {Alert, Button, Container, Form} from "react-bootstrap";
-import {signInWithEmailAndPassword, signInWithGoogle} from "../../../authService/firebaseAuthService.ts";
-import {useContext, useEffect, useState} from "react";
-import {useNavigate, useRouter} from "@tanstack/react-router";
-import {LoginUserContext} from "../../../context/LoginUserContext.tsx";
-import {GoogleLoginButton} from "react-social-login-buttons";
+
+import {
+  signInWithEmailAndPassword,
+  signInWithGoogle
+} from "../../../authService/firebaseAuthService.ts";
+
+import {
+  LoginUserContext
+} from "../../../context/LoginUserContext.tsx";
+
+import "./LoginPage.css";
+
 
 export default function LoginPage() {
+
   const router = useRouter();
-  const navigate = useNavigate({from:"/login/"});
-  const loginUser = useContext(LoginUserContext)
 
-  const [isLogining, setIsLogining] = useState(false);
-  const [isLoginFailed, setIsLoginFailed] = useState(false);
+  const navigate =
+      useNavigate({
+        from: "/login/"
+      });
 
-  const handleEmailAndPasswordLogin = async (event: React.SubmitEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsLogining(true);
+  const loginUser =
+      useContext(LoginUserContext);
 
-    const target = event.target as typeof event.target & {
-      email: { value: string };
-      password: { value: string };
-    };
-    const email = target.email.value; // typechecks!
-    const password = target.password.value; // typechecks!
-    const loginResult = await signInWithEmailAndPassword(email, password);
-    if (loginResult) {
-      router.history.back();
-    } else {
-      setIsLoginFailed(true);
-      setIsLogining(false);
+  const [isLogining, setIsLogining] =
+      useState(false);
 
-      console.log(loginResult);
-    }
-  }
+  const [isLoginFailed, setIsLoginFailed] =
+      useState(false);
 
-  const handleGoogleSignIn= ()=>{
-    void signInWithGoogle()
-  }
+
+  const handleEmailAndPasswordLogin =
+      async (
+          event: React.SubmitEvent<HTMLFormElement>
+      ) => {
+
+        event.preventDefault();
+
+        setIsLogining(true);
+        setIsLoginFailed(false);
+
+        const target =
+            event.target as typeof event.target & {
+              email: {value: string};
+              password: {value: string};
+            };
+
+        const email =
+            target.email.value;
+
+        const password =
+            target.password.value;
+
+        const loginResult =
+            await signInWithEmailAndPassword(
+                email,
+                password
+            );
+
+        if (loginResult) {
+
+          router.history.back();
+
+        } else {
+
+          setIsLoginFailed(true);
+          setIsLogining(false);
+        }
+      };
+
+
+  const handleGoogleSignIn = () => {
+    void signInWithGoogle();
+  };
+
 
   useEffect(() => {
-    if(loginUser){
-      void navigate({to:"/"});
+
+    if (loginUser) {
+
+      void navigate({
+        to: "/"
+      });
     }
-  },[loginUser]);
+
+  }, [loginUser, navigate]);
+
+
   return (
       <>
-        <TopNavBar/>
-        <Container>
-          <Form onSubmit={handleEmailAndPasswordLogin}>
-            {
-              isLoginFailed &&
-              <Alert variant="danger">
-                Invalid email or password!
-              </Alert>
-            }
+        <TopNavBar
+            showSearch={false}
+            showFavorite={false}
+        />
 
-            < Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>Email address</Form.Label>
-              <Form.Control type="email" placeholder="Enter email" name="email"/>
-            </Form.Group>
+        <main className="login-page">
 
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control type="password" placeholder="Password" name="password"/>
-            </Form.Group>
+          <Container className="login-page-container">
 
-            <Button variant="primary" type="submit" className={"w-100"} disabled={isLogining}>
-              Login
-            </Button>
-          </Form>
-          <GoogleLoginButton onClick={handleGoogleSignIn}/>
-        </Container>
+            <div className="login-layout">
+
+
+              {/* Left branding panel */}
+              <section className="login-brand-panel">
+
+                <Carousel
+                    fade
+                    controls={false}
+                    indicators={false}
+                    interval={6000}
+                    pause={false}
+                    className="login-background-carousel"
+                >
+
+                  <Carousel.Item>
+
+                    <img
+                        src="https://project-image-bucket-2026.s3.ap-southeast-1.amazonaws.com/LoginBackground1.png"
+                        alt=""
+                        className="login-background-image"
+                    />
+
+                  </Carousel.Item>
+
+
+                  <Carousel.Item>
+
+                    <img
+                        src="https://project-image-bucket-2026.s3.ap-southeast-1.amazonaws.com/LoginBackground2.png"
+                        alt=""
+                        className="login-background-image"
+                    />
+
+                  </Carousel.Item>
+
+
+                  <Carousel.Item>
+
+                    <img
+                        src="https://project-image-bucket-2026.s3.ap-southeast-1.amazonaws.com/LoginBackground3.png"
+                        alt=""
+                        className="login-background-image"
+                    />
+
+                  </Carousel.Item>
+
+                </Carousel>
+
+
+                <div className="login-brand-overlay"/>
+
+
+                <div className="login-brand-content">
+
+                  <div className="login-brand-label">
+                    FRANKIE'S GROCERY
+                  </div>
+
+                  <h1>
+                    Fresh groceries.
+                    <br/>
+                    Simple shopping.
+                  </h1>
+
+                  <p>
+                    精選優質食材，讓日常購物變得更簡單。
+                  </p>
+
+
+                  <div className="login-brand-features">
+
+                    <div>
+                      <span>✓</span>
+                      精選新鮮食材
+                    </div>
+
+                    <div>
+                      <span>✓</span>
+                      簡單快捷網上購物
+                    </div>
+
+                    <div>
+                      <span>✓</span>
+                      滿 HK$500 免費送貨
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </section>
+
+
+              {/* Login form */}
+              <section className="login-form-section">
+
+                <div className="login-form-container">
+
+                  <div className="login-form-heading">
+
+                    <div className="login-welcome-label">
+                      Welcome back
+                    </div>
+
+                    <h2>
+                      登入你的帳戶
+                    </h2>
+
+                    <p>
+                      登入後可以管理購物車及收藏商品。
+                    </p>
+
+                  </div>
+
+
+                  {
+                      isLoginFailed && (
+                          <Alert
+                              variant="danger"
+                              className="login-error-alert"
+                          >
+                            Email 或密碼不正確，請再試一次。
+                          </Alert>
+                      )
+                  }
+
+
+                  <Form
+                      onSubmit={
+                        handleEmailAndPasswordLogin
+                      }
+                  >
+
+                    <Form.Group
+                        className="mb-3"
+                        controlId="formBasicEmail"
+                    >
+
+                      <Form.Label>
+                        Email
+                      </Form.Label>
+
+                      <Form.Control
+                          type="email"
+                          name="email"
+                          placeholder="name@example.com"
+                          autoComplete="email"
+                          disabled={isLogining}
+                          required
+                      />
+
+                    </Form.Group>
+
+
+                    <Form.Group
+                        className="mb-4"
+                        controlId="formBasicPassword"
+                    >
+
+                      <Form.Label>
+                        Password
+                      </Form.Label>
+
+                      <Form.Control
+                          type="password"
+                          name="password"
+                          placeholder="輸入密碼"
+                          autoComplete="current-password"
+                          disabled={isLogining}
+                          required
+                      />
+
+                    </Form.Group>
+
+
+                    <Button
+                        type="submit"
+                        className="login-submit-button"
+                        disabled={isLogining}
+                    >
+
+                      {
+                        isLogining
+                            ? (
+                                <>
+                                  <Spinner
+                                      animation="border"
+                                      size="sm"
+                                      className="me-2"
+                                  />
+                                  登入中...
+                                </>
+                            )
+                            : "Login"
+                      }
+
+                    </Button>
+
+                  </Form>
+
+
+                  <div className="login-divider">
+
+                    <span>
+                      或使用
+                    </span>
+
+                  </div>
+
+
+                  <div className="login-google-wrapper">
+
+                    <GoogleLoginButton
+                        onClick={handleGoogleSignIn}
+                    />
+
+                  </div>
+
+
+                  <div className="login-security-text">
+                    安全登入由 Firebase Authentication 提供
+                  </div>
+
+                </div>
+
+              </section>
+
+            </div>
+
+          </Container>
+
+        </main>
       </>
-  )
+  );
 }

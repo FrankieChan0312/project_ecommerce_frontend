@@ -7,7 +7,8 @@ export default function LoadingContainer(){
                  height: "90vh",
                }}>
             <img
-                src="https://img.pikbest.com/png-images/20190918/cartoon-snail-loading-loading-gif-animation_2734139.png!bw700"
+                src="https://media.tenor.com/dTQGNMbzP10AAAAM/grocery-shopping.gif"
+                // src="https://img.pikbest.com/png-images/20190918/cartoon-snail-loading-loading-gif-animation_2734139.png!bw700"
                 width={720}
                 alt="loading"
 

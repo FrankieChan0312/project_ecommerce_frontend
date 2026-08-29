@@ -1,86 +1,8 @@
-// import TopNavBar from "../../component/TopNavBar.tsx";
-// import {Alert, Button, Container, Form} from "react-bootstrap";
-// import {signInWithEmailAndPassword, signInWithGoogle} from "../../../authService/firebaseAuthService.ts";
-// import {useContext, useEffect, useState} from "react";
-// import {useNavigate, useRouter} from "@tanstack/react-router";
-// import {LoginUserContext} from "../../../context/LoginUserContext.tsx";
-// import {GoogleLoginButton} from "react-social-login-buttons";
-//
-// export default function LoginPage() {
-//   const router = useRouter();
-//   const navigate = useNavigate({from:"/login/"});
-//   const loginUser = useContext(LoginUserContext)
-//
-//   const [isLogining, setIsLogining] = useState(false);
-//   const [isLoginFailed, setIsLoginFailed] = useState(false);
-//
-//   const handleEmailAndPasswordLogin = async (event: React.SubmitEvent<HTMLFormElement>) => {
-//     event.preventDefault();
-//     setIsLogining(true);
-//
-//     const target = event.target as typeof event.target & {
-//       email: { value: string };
-//       password: { value: string };
-//     };
-//     const email = target.email.value; // typechecks!
-//     const password = target.password.value; // typechecks!
-//     const loginResult = await signInWithEmailAndPassword(email, password);
-//     if (loginResult) {
-//       router.history.back();
-//     } else {
-//       setIsLoginFailed(true);
-//       setIsLogining(false);
-//
-//       console.log(loginResult);
-//     }
-//   }
-//
-//   const handleGoogleSignIn= ()=>{
-//     void signInWithGoogle()
-//   }
-//
-//   useEffect(() => {
-//     if(loginUser){
-//       void navigate({to:"/"});
-//     }
-//   },[loginUser]);
-//   return (
-//       <>
-//         <TopNavBar/>
-//         <Container>
-//           <Form onSubmit={handleEmailAndPasswordLogin}>
-//             {
-//               isLoginFailed &&
-//               <Alert variant="danger">
-//                 Invalid email or password!
-//               </Alert>
-//             }
-//
-//             < Form.Group className="mb-3" controlId="formBasicEmail">
-//               <Form.Label>Email address</Form.Label>
-//               <Form.Control type="email" placeholder="Enter email" name="email"/>
-//             </Form.Group>
-//
-//             <Form.Group className="mb-3" controlId="formBasicPassword">
-//               <Form.Label>Password</Form.Label>
-//               <Form.Control type="password" placeholder="Password" name="password"/>
-//             </Form.Group>
-//
-//             <Button variant="primary" type="submit" className={"w-100"} disabled={isLogining}>
-//               Login
-//             </Button>
-//           </Form>
-//           <GoogleLoginButton onClick={handleGoogleSignIn}/>
-//         </Container>
-//       </>
-//   )
-// }
-
 import {
   Alert,
   Button,
+  Carousel,
   Container,
-    Carousel,
   Form,
   Spinner
 } from "react-bootstrap";
@@ -100,7 +22,8 @@ import {
   GoogleLoginButton
 } from "react-social-login-buttons";
 
-import TopNavBar from "../../component/TopNavBar.tsx";
+import TopNavBar
+  from "../../component/TopNavBar.tsx";
 
 import {
   signInWithEmailAndPassword,
@@ -116,22 +39,31 @@ import "./LoginPage.css";
 
 export default function LoginPage() {
 
-  const router = useRouter();
+  const router =
+      useRouter();
+
 
   const navigate =
       useNavigate({
         from: "/login/"
       });
 
+
   const loginUser =
       useContext(LoginUserContext);
+
 
   const [isLogining, setIsLogining] =
       useState(false);
 
+
   const [isLoginFailed, setIsLoginFailed] =
       useState(false);
 
+
+  // =========================
+  // Email / password login
+  // =========================
 
   const handleEmailAndPasswordLogin =
       async (
@@ -140,46 +72,80 @@ export default function LoginPage() {
 
         event.preventDefault();
 
+
+        // Disable the form while Firebase is processing
+        // the authentication request.
         setIsLogining(true);
+
         setIsLoginFailed(false);
+
 
         const target =
             event.target as typeof event.target & {
-              email: {value: string};
-              password: {value: string};
+              email: {
+                value: string
+              };
+              password: {
+                value: string
+              };
             };
+
 
         const email =
             target.email.value;
 
+
         const password =
             target.password.value;
 
+
+        // Authentication is handled by Firebase.
+        // The frontend receives only a success/failure result here.
         const loginResult =
             await signInWithEmailAndPassword(
                 email,
                 password
             );
 
+
         if (loginResult) {
 
+          // Return the user to the previous page after
+          // a successful email/password login.
           router.history.back();
 
         } else {
 
+          // Keep the user on the login page and show
+          // a friendly validation message.
           setIsLoginFailed(true);
+
           setIsLogining(false);
         }
       };
 
 
-  const handleGoogleSignIn = () => {
-    void signInWithGoogle();
-  };
+  // =========================
+  // Google login
+  // =========================
 
+  const handleGoogleSignIn =
+      () => {
+
+        // Firebase opens the Google account selection popup
+        // and updates the global authentication state on success.
+        void signInWithGoogle();
+      };
+
+
+  // =========================
+  // Authentication redirect
+  // =========================
 
   useEffect(() => {
 
+    // If an authenticated user reaches the login page,
+    // redirect them back to the homepage.
     if (loginUser) {
 
       void navigate({
@@ -187,7 +153,10 @@ export default function LoginPage() {
       });
     }
 
-  }, [loginUser, navigate]);
+  }, [
+    loginUser,
+    navigate
+  ]);
 
 
   return (
@@ -197,6 +166,7 @@ export default function LoginPage() {
             showFavorite={false}
         />
 
+
         <main className="login-page">
 
           <Container className="login-page-container">
@@ -204,7 +174,8 @@ export default function LoginPage() {
             <div className="login-layout">
 
 
-              {/* Left branding panel */}
+              {/* Decorative branding panel.
+                  The carousel images do not contain required page content. */}
               <section className="login-brand-panel">
 
                 <Carousel
@@ -260,11 +231,13 @@ export default function LoginPage() {
                     FRANKIE'S GROCERY
                   </div>
 
+
                   <h1>
                     Fresh groceries.
                     <br/>
                     Simple shopping.
                   </h1>
+
 
                   <p>
                     精選優質食材，讓日常購物變得更簡單。
@@ -278,10 +251,12 @@ export default function LoginPage() {
                       精選新鮮食材
                     </div>
 
+
                     <div>
                       <span>✓</span>
                       簡單快捷網上購物
                     </div>
+
 
                     <div>
                       <span>✓</span>
@@ -295,7 +270,7 @@ export default function LoginPage() {
               </section>
 
 
-              {/* Login form */}
+              {/* Authentication form */}
               <section className="login-form-section">
 
                 <div className="login-form-container">
@@ -306,9 +281,11 @@ export default function LoginPage() {
                       Welcome back
                     </div>
 
+
                     <h2>
                       登入你的帳戶
                     </h2>
+
 
                     <p>
                       登入後可以管理購物車及收藏商品。
@@ -319,12 +296,14 @@ export default function LoginPage() {
 
                   {
                       isLoginFailed && (
+
                           <Alert
                               variant="danger"
                               className="login-error-alert"
                           >
                             Email 或密碼不正確，請再試一次。
                           </Alert>
+
                       )
                   }
 
@@ -343,6 +322,7 @@ export default function LoginPage() {
                       <Form.Label>
                         Email
                       </Form.Label>
+
 
                       <Form.Control
                           type="email"
@@ -364,6 +344,7 @@ export default function LoginPage() {
                       <Form.Label>
                         Password
                       </Form.Label>
+
 
                       <Form.Control
                           type="password"
@@ -392,6 +373,7 @@ export default function LoginPage() {
                                       size="sm"
                                       className="me-2"
                                   />
+
                                   登入中...
                                 </>
                             )
@@ -415,7 +397,9 @@ export default function LoginPage() {
                   <div className="login-google-wrapper">
 
                     <GoogleLoginButton
-                        onClick={handleGoogleSignIn}
+                        onClick={
+                          handleGoogleSignIn
+                        }
                     />
 
                   </div>

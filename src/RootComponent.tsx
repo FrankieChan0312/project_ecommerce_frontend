@@ -1,24 +1,5 @@
-// import {Outlet} from "@tanstack/react-router";
-// import {useEffect, useState} from "react";
-// import {onAuthStateChanged} from "./authService/firebaseAuthService.ts";
-// import type {UserData} from "./data/user/user.type.ts";
-// import {LoginUserContext} from "./context/LoginUserContext.tsx";
-//
-// export default function RootComponent() {
-//   const [loginUser, setloginUser] = useState<UserData | null|undefined>(undefined);
-//   useEffect(() => {
-//     onAuthStateChanged(setloginUser);
-//   }, [])
-//   return (
-//       <>
-//         <LoginUserContext.Provider value={loginUser}>
-//           <Outlet/>
-//         </LoginUserContext.Provider>
-//       </>
-//   )
-// }
-
 import {Outlet} from "@tanstack/react-router";
+
 import {
   useCallback,
   useEffect,
@@ -59,6 +40,8 @@ export default function RootComponent() {
 
   useEffect(() => {
 
+    // Subscribe once when the application starts.
+    // Firebase will notify React whenever the user logs in or out.
     onAuthStateChanged(setLoginUser);
 
   }, []);
@@ -67,6 +50,8 @@ export default function RootComponent() {
   const refreshCartItemCount =
       useCallback(async () => {
 
+        // A logged-out user has no authenticated cart.
+        // Reset the shared badge immediately when the user signs out.
         if (!loginUser) {
 
           setCartItemCount(0);
@@ -79,6 +64,8 @@ export default function RootComponent() {
           const cartItemDtoList =
               await getUserCart();
 
+          // The navbar badge shows the total number of units
+          // across all cart items rather than the number of product rows.
           const totalQuantity =
               cartItemDtoList.reduce(
                   (total, dto) =>
@@ -101,6 +88,8 @@ export default function RootComponent() {
 
   useEffect(() => {
 
+    // Refresh the shared cart badge whenever the authenticated
+    // user changes, including immediately after login or logout.
     void refreshCartItemCount();
 
   }, [refreshCartItemCount]);
@@ -118,6 +107,7 @@ export default function RootComponent() {
             }}
         >
 
+          {/* All routed pages share the authentication and cart state above. */}
           <Outlet/>
 
         </CartContext.Provider>

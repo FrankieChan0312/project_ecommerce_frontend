@@ -1,9 +1,22 @@
-import {Button, Spinner} from "react-bootstrap";
-import {useEffect, useState} from "react";
+import {
+  Button,
+  Spinner
+} from "react-bootstrap";
+
+import {
+  useEffect,
+  useState
+} from "react";
+
 import {useNavigate} from "@tanstack/react-router";
 
-import type {CategoryDto} from "../../../../data/category/category.type.ts";
-import {getAllCategories} from "../../../../api/categoryApi.ts";
+import type {
+  CategoryDto
+} from "../../../../data/category/category.type.ts";
+
+import {
+  getAllCategories
+} from "../../../../api/categoryApi.ts";
 
 import "./CategoryBar.css";
 
@@ -25,38 +38,47 @@ export default function CategoryBar({
   const [isLoading, setIsLoading] =
       useState(true);
 
-  const navigate = useNavigate({from: "/"});
+  const navigate =
+      useNavigate({from: "/"});
 
 
   useEffect(() => {
 
-    const fetchCategories = async () => {
+    const fetchCategories =
+        async () => {
 
-      try {
+          try {
 
-        const responseData =
-            await getAllCategories();
+            const responseData =
+                await getAllCategories();
 
-        const sortedCategories =
-            [...responseData].sort(
-                (a, b) =>
-                    a.categoryId - b.categoryId
+
+            // Keep category buttons in database ID order
+            // so their display order remains stable.
+            const sortedCategories =
+                [...responseData].sort(
+                    (a, b) =>
+                        a.categoryId
+                        - b.categoryId
+                );
+
+
+            setCategories(
+                sortedCategories
             );
 
-        setCategories(sortedCategories);
+          } catch {
 
-      } catch {
+            void navigate({
+              to: "/error"
+            });
 
-        void navigate({
-          to: "/error"
-        });
+          } finally {
 
-      } finally {
+            setIsLoading(false);
+          }
+        };
 
-        setIsLoading(false);
-
-      }
-    };
 
     void fetchCategories();
 
@@ -64,12 +86,15 @@ export default function CategoryBar({
 
 
   if (isLoading) {
+
     return (
         <div className="category-bar-loading">
+
           <Spinner
               animation="border"
               size="sm"
           />
+
         </div>
     );
   }
@@ -78,6 +103,7 @@ export default function CategoryBar({
   return (
       <div className="category-bar">
 
+        {/* undefined represents the default "all products" filter. */}
         <Button
             className={
               selectedCategoryId === undefined

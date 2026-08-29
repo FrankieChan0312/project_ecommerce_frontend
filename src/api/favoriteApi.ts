@@ -1,64 +1,59 @@
 import axios from "axios";
-import {getAuth} from "firebase/auth";
 
-import {baseUrl} from "./productApi.ts";
-import type {FavoriteDto} from "../data/favorite/favorite.type.ts";
+import {
+  baseUrl
+} from "./productApi.ts";
 
+import {
+  getAuthConfig
+} from "../authService/firebaseAuthService.ts";
 
-async function getAuthConfig() {
-
-  const auth = getAuth();
-  const user = auth.currentUser;
-
-  if (!user) {
-    throw new Error("User is not logged in");
-  }
-
-  const token = await user.getIdToken();
-
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  };
-}
+import type {
+  FavoriteDto
+} from "../data/favorite/favorite.type.ts";
 
 
+// Favorite endpoints are protected.
+// getAuthConfig() attaches the current Firebase user's
+// ID token to the Authorization header.
 export async function getFavorites() {
 
-  const config = await getAuthConfig();
-
+  // Load only the favorites belonging to the authenticated user.
   const response =
       await axios.get<FavoriteDto[]>(
           `${baseUrl}/favorites`,
-          config
+          await getAuthConfig()
       );
 
   return response.data;
 }
 
 
-export async function addFavorite(pid: number) {
+export async function addFavorite(
+    pid: number
+) {
 
-  const config = await getAuthConfig();
-
+  // Add the selected product to the authenticated user's favorites.
+  // The backend prevents duplicate user-product favorite records.
   const response =
       await axios.post<FavoriteDto>(
           `${baseUrl}/favorites/${pid}`,
           null,
-          config
+          await getAuthConfig()
       );
 
   return response.data;
 }
 
 
-export async function removeFavorite(pid: number) {
+export async function removeFavorite(
+    pid: number
+) {
 
-  const config = await getAuthConfig();
-
+  // Remove the selected product from the authenticated user's favorites.
+  // The backend responds with HTTP 204 because no response body is required.
   await axios.delete(
       `${baseUrl}/favorites/${pid}`,
-      config
+      await getAuthConfig()
   );
 }

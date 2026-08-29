@@ -1,13 +1,20 @@
-import {Button, Stack} from "react-bootstrap";
+import {Button, Spinner, Stack} from "react-bootstrap";
 
 interface Props {
   quantity: number,
   handleQuantityMinusOne: () => void,
   handleQuantityPlusOne: () => void,
-  stock: number
+  stock: number,
+  isLoading?: boolean
 }
 
-export default function QuantitySelector({quantity, handleQuantityMinusOne, handleQuantityPlusOne, stock}: Props) {
+export default function QuantitySelector({
+                                           quantity,
+                                           handleQuantityMinusOne,
+                                           handleQuantityPlusOne,
+                                           stock,
+                                           isLoading=false}: Props) {
+
   return (
 
       <Stack direction="horizontal">
@@ -15,19 +22,20 @@ export default function QuantitySelector({quantity, handleQuantityMinusOne, hand
             variant={"light"}
             style={{height: 40, width: 40}}
             onClick={handleQuantityMinusOne}
-            disabled={quantity <= 1}>
+            disabled={quantity <= 1||isLoading}
+        >
           -
         </Button>
         <div style={{height: 40, width: 40}}
              className="d-flex align-items-center justify-content-center"
         >
-          {quantity}
+          {isLoading?<Spinner size="sm" /> :quantity}
         </div>
         <Button
             variant={"light"}
             style={{height: 40, width: 40}}
             onClick={handleQuantityPlusOne}
-              disabled={quantity >= stock}>
+            disabled={quantity >= stock||isLoading}>
           +
         </Button>
 

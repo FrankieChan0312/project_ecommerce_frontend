@@ -145,19 +145,24 @@
 }
 
 .grocery-logout-button {
-    min-height: 42px;
-
-    color: var(--grocery-white);
-    background-color: var(--grocery-green);
-
-    border-color: var(--grocery-green);
-    border-radius: 999px;
+    background-color: var(--grocery-green) !important;
+    border-color: var(--grocery-green) !important;
+    color: #ffffff !important;
+    font-weight: 700;
 }
 
-.grocery-logout-button:hover {
-    color: var(--grocery-dark);
-    background-color: var(--grocery-yellow);
-    border-color: var(--grocery-yellow);
+.grocery-logout-button:hover:not(:disabled) {
+    background-color: var(--grocery-dark) !important;
+    border-color: var(--grocery-dark) !important;
+    color: #ffffff !important;
+}
+
+.grocery-logout-button:disabled,
+.grocery-logout-button.disabled {
+    background-color: var(--grocery-green) !important;
+    border-color: var(--grocery-green) !important;
+    color: #ffffff !important;
+    opacity: 0.65;
 }
 
 .grocery-user-email {

@@ -33,6 +33,8 @@ export default function ProductCard({
 
         <div className="product-card-image-container">
 
+          {/* Both the product image and detail button navigate
+              to the same product-detail route using the product ID. */}
           <Link
               to="/product/$productId"
               params={{
@@ -46,6 +48,9 @@ export default function ProductCard({
             />
           </Link>
 
+
+          {/* Disable the favorite button while the current product
+              is waiting for its add/remove favorite request to finish. */}
           <Button
               type="button"
               className="product-card-favorite"
@@ -102,6 +107,8 @@ export default function ProductCard({
           </div>
 
 
+          {/* The product-list API exposes stock as a simple availability flag.
+              Exact stock quantity is only needed on the product-detail page. */}
           <div
               className={
                 dto.hasStock

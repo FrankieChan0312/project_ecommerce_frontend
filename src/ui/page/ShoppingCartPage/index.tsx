@@ -10,6 +10,7 @@ import {
 } from "react-bootstrap";
 
 import {
+  Link,
   useNavigate
 } from "@tanstack/react-router";
 
@@ -21,9 +22,14 @@ import {
   postTransaction
 } from "../../../api/transactionApi.ts";
 
-import TopNavBar from "../../component/TopNavBar.tsx";
-import ShoppingCartTable from "./component/ShoppingCartTable.tsx";
-import LoadingContainer from "../../component/LoadingContainer.tsx";
+import TopNavBar
+  from "../../component/TopNavBar.tsx";
+
+import ShoppingCartTable
+  from "./component/ShoppingCartTable.tsx";
+
+import LoadingContainer
+  from "../../component/LoadingContainer.tsx";
 
 import type {
   CartItemDto
@@ -46,13 +52,18 @@ const SHIPPING_FEE = 50;
 
 export default function ShoppingCartPage() {
 
-  const [cartItemDtoList, setCartItemDtoList] =
+  const [
+    cartItemDtoList,
+    setCartItemDtoList
+  ] =
       useState<CartItemDto[] | undefined>(
           undefined
       );
 
+
   const [isLoading, setIsLoading] =
       useState(true);
+
 
   const [isCheckout, setIsCheckout] =
       useState(false);
@@ -60,6 +71,7 @@ export default function ShoppingCartPage() {
 
   const loginUser =
       useContext(LoginUserContext);
+
 
   const cartContext =
       useContext(CartContext);
@@ -82,10 +94,9 @@ export default function ShoppingCartPage() {
 
           setIsLoading(true);
 
+
           try {
 
-            // Cart data belongs to the authenticated user,
-            // so the request includes the Firebase Bearer token.
             const responseData =
                 await getUserCart();
 
@@ -110,10 +121,10 @@ export default function ShoppingCartPage() {
 
       void fetchUserCart();
 
-    } else if (loginUser === null) {
+    } else if (
+        loginUser === null
+    ) {
 
-      // Redirect only after Firebase has confirmed
-      // that no user is currently authenticated.
       void navigate({
         to: "/login"
       });
@@ -134,8 +145,6 @@ export default function ShoppingCartPage() {
       quantity: number
   ) => {
 
-    // Update the local cart only after the backend
-    // has successfully changed the quantity.
     setCartItemDtoList(
         (prevState) =>
             prevState?.map(
@@ -149,8 +158,7 @@ export default function ShoppingCartPage() {
             )
     );
 
-    // Keep the global navbar cart badge synchronized
-    // with the latest quantities.
+
     void cartContext
         ?.refreshCartItemCount();
   };
@@ -160,8 +168,6 @@ export default function ShoppingCartPage() {
       pid: number
   ) => {
 
-    // Remove the deleted product from the local cart
-    // without requesting the complete cart again.
     setCartItemDtoList(
         (prevState) =>
             prevState?.filter(
@@ -170,7 +176,7 @@ export default function ShoppingCartPage() {
             )
     );
 
-    // Refresh the navbar badge after deletion.
+
     void cartContext
         ?.refreshCartItemCount();
   };
@@ -187,17 +193,19 @@ export default function ShoppingCartPage() {
 
           setIsCheckout(true);
 
-          // Create a transaction snapshot from the current cart.
-          // The backend creates the transaction in PREPARE status.
+
+          // Create a new transaction in PREPARE status
+          // from the user's current cart.
           const responseData =
               await postTransaction();
 
-          // Continue checkout using the transaction ID returned
-          // by the backend.
+
           void navigate({
             to: "/checkout/$tid",
             params: {
-              tid: responseData.tid.toString()
+              tid:
+                  responseData.tid
+                      .toString()
             }
           });
 
@@ -222,7 +230,6 @@ export default function ShoppingCartPage() {
       dtoList: CartItemDto[]
   ) => {
 
-    // Merchandise total before delivery charges.
     return dtoList.reduce(
         (total, dto) =>
             total
@@ -240,9 +247,9 @@ export default function ShoppingCartPage() {
     const subtotal =
         calSubtotal(dtoList);
 
-    // Orders of HK$500 or above receive free delivery.
-    // Smaller orders are charged HK$50.
-    return subtotal >= FREE_SHIPPING_THRESHOLD
+
+    return subtotal >=
+    FREE_SHIPPING_THRESHOLD
         ? 0
         : SHIPPING_FEE;
   };
@@ -252,9 +259,6 @@ export default function ShoppingCartPage() {
       dtoList: CartItemDto[]
   ) => {
 
-    // Final amount displayed before checkout.
-    // The backend independently calculates the transaction total
-    // and remains the final authority for the charged amount.
     return calSubtotal(dtoList)
         + calShippingFee(dtoList);
   };
@@ -264,154 +268,191 @@ export default function ShoppingCartPage() {
   // Cart content
   // =========================
 
-  const renderShoppingCart = () => {
+  const renderShoppingCart =
+      () => {
 
-    if (
-        isLoading ||
-        !cartItemDtoList
-    ) {
+        if (
+            isLoading ||
+            !cartItemDtoList
+        ) {
 
-      return <LoadingContainer/>;
-    }
-
-
-    if (cartItemDtoList.length === 0) {
-
-      return (
-          <h1>
-            你的購物車空白一片
-          </h1>
-      );
-    }
+          return <LoadingContainer/>;
+        }
 
 
-    const subtotal =
-        calSubtotal(
-            cartItemDtoList
-        );
+        if (
+            cartItemDtoList.length === 0
+        ) {
 
-    const shippingFee =
-        calShippingFee(
-            cartItemDtoList
-        );
+          return (
+              <div className="shopping-cart-empty">
 
-    const grandTotal =
-        calGrandTotal(
-            cartItemDtoList
-        );
+                <h2>
+                  你的購物車空白一片
+                </h2>
 
 
-    return (
-        <>
-          <div className="shopping-cart-header">
+                <p>
+                  返回商品列表挑選你喜歡的商品吧。
+                </p>
 
-            <div>
-
-              <h1 className="shopping-cart-title">
-                Shopping Cart
-              </h1>
-
-              <p className="shopping-cart-count">
-                {cartItemDtoList.length} 件商品
-              </p>
-
-            </div>
-
-          </div>
+              </div>
+          );
+        }
 
 
-          <div className="shopping-cart-layout">
-
-            <div className="shopping-cart-table-section">
-
-              <ShoppingCartTable
-                  cartItemDtoList={
-                    cartItemDtoList
-                  }
-                  handleQuantityChange={
-                    handleQuantityChange
-                  }
-                  handleDelete={
-                    handleDelete
-                  }
-              />
-
-            </div>
+        const subtotal =
+            calSubtotal(
+                cartItemDtoList
+            );
 
 
-            <div className="shopping-cart-summary">
+        const shippingFee =
+            calShippingFee(
+                cartItemDtoList
+            );
 
-              <h3>
-                賬單總覽
-              </h3>
+
+        const grandTotal =
+            calGrandTotal(
+                cartItemDtoList
+            );
 
 
-              <div className="shopping-cart-summary-row">
+        return (
+            <>
 
-                <span>
-                  商品總額
-                </span>
+              <div className="shopping-cart-header">
 
-                <span>
-                  HK${subtotal.toLocaleString()}
-                </span>
+                <div>
+
+                  <h1 className="shopping-cart-title">
+                    Shopping Cart
+                  </h1>
+
+
+                  <p className="shopping-cart-count">
+                    {
+                      cartItemDtoList.length
+                    } 件商品
+                  </p>
+
+                </div>
 
               </div>
 
 
-              <div className="shopping-cart-summary-row">
+              <div className="shopping-cart-layout">
 
-                <span>
-                  運費
-                </span>
 
-                <span>
-                  {
-                    shippingFee === 0
-                        ? "免費"
-                        : `HK$${shippingFee.toLocaleString()}`
-                  }
-                </span>
+                <div className="shopping-cart-table-section">
+
+                  <ShoppingCartTable
+                      cartItemDtoList={
+                        cartItemDtoList
+                      }
+                      handleQuantityChange={
+                        handleQuantityChange
+                      }
+                      handleDelete={
+                        handleDelete
+                      }
+                  />
+
+                </div>
+
+
+                <aside className="shopping-cart-summary">
+
+                  <h3>
+                    賬單總覽
+                  </h3>
+
+
+                  <div className="shopping-cart-summary-row">
+
+                    <span>
+                      商品總額
+                    </span>
+
+
+                    <span>
+                      HK$
+                      {
+                        subtotal
+                            .toLocaleString()
+                      }
+                    </span>
+
+                  </div>
+
+
+                  <div className="shopping-cart-summary-row">
+
+                    <span>
+                      運費
+                    </span>
+
+
+                    <span>
+
+                      {
+                        shippingFee === 0
+                            ? "免費"
+                            : `HK$${shippingFee.toLocaleString()}`
+                      }
+
+                    </span>
+
+                  </div>
+
+
+                  <hr/>
+
+
+                  <div className="shopping-cart-total">
+
+                    <span>
+                      Total
+                    </span>
+
+
+                    <span>
+                      HK$
+                      {
+                        grandTotal
+                            .toLocaleString()
+                      }
+                    </span>
+
+                  </div>
+
+
+                  <Button
+                      className="shopping-cart-checkout-button"
+                      onClick={() => {
+                        void handleCheckout();
+                      }}
+                      disabled={
+                        isCheckout
+                      }
+                  >
+
+                    {
+                      isCheckout
+                          ? "正在處理..."
+                          : "前往結賬"
+                    }
+
+                  </Button>
+
+                </aside>
 
               </div>
 
-
-              <hr/>
-
-
-              <div className="shopping-cart-total">
-
-                <span>
-                  Total
-                </span>
-
-                <span>
-                  HK${grandTotal.toLocaleString()}
-                </span>
-
-              </div>
-
-
-              <Button
-                  className="shopping-cart-checkout-button"
-                  onClick={() => {
-                    void handleCheckout();
-                  }}
-                  disabled={isCheckout}
-              >
-                {
-                  isCheckout
-                      ? "正在處理..."
-                      : "前往結賬"
-                }
-              </Button>
-
-            </div>
-
-          </div>
-        </>
-    );
-  };
+            </>
+        );
+      };
 
 
   return (
@@ -420,9 +461,29 @@ export default function ShoppingCartPage() {
             showSearch={false}
         />
 
-        <Container>
-          {renderShoppingCart()}
-        </Container>
+
+        <main className="shopping-cart-page">
+
+          <Container>
+
+
+            <div className="shopping-cart-navigation">
+
+              <Link
+                  to="/"
+                  className="btn shopping-cart-back-button"
+              >
+                ← 繼續購物
+              </Link>
+
+            </div>
+
+
+            {renderShoppingCart()}
+
+          </Container>
+
+        </main>
       </>
   );
 }

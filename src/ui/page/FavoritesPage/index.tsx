@@ -54,8 +54,6 @@ export default function FavoritesPage() {
       useState(true);
 
 
-  // Track products whose remove-favorite requests
-  // are currently waiting for a backend response.
   const [
     pendingFavoritePids,
     setPendingFavoritePids
@@ -74,8 +72,6 @@ export default function FavoritesPage() {
     const fetchFavorites =
         async () => {
 
-          // Favorites belong to authenticated users.
-          // Clear any previous user's favorites after logout.
           if (!loginUser) {
 
             setFavoriteDtoList([]);
@@ -90,8 +86,6 @@ export default function FavoritesPage() {
 
           try {
 
-            // Load only the favorites belonging
-            // to the currently authenticated user.
             const responseData =
                 await getFavorites();
 
@@ -127,8 +121,6 @@ export default function FavoritesPage() {
           pid: number
       ) => {
 
-        // Ignore repeated clicks while the same product
-        // is already waiting for its DELETE request.
         if (
             pendingFavoritePids.has(pid)
         ) {
@@ -149,8 +141,6 @@ export default function FavoritesPage() {
         }
 
 
-        // Remember the original position so a failed DELETE
-        // can restore the product to approximately the same place.
         const removedIndex =
             favoriteDtoList.findIndex(
                 (favorite) =>
@@ -158,8 +148,6 @@ export default function FavoritesPage() {
             );
 
 
-        // Mark this product as pending so its heart button
-        // cannot be repeatedly clicked during the request.
         setPendingFavoritePids(
             (prevState) => {
 
@@ -173,9 +161,7 @@ export default function FavoritesPage() {
         );
 
 
-        // Optimistic UI:
-        // remove the product immediately instead of waiting
-        // for the backend response.
+        // Optimistically remove the product from the UI.
         setFavoriteDtoList(
             (prevState) =>
                 prevState.filter(
@@ -197,13 +183,10 @@ export default function FavoritesPage() {
           );
 
 
-          // Roll back the optimistic UI update
-          // when the backend DELETE request fails.
+          // Restore the product if the backend request fails.
           setFavoriteDtoList(
               (prevState) => {
 
-                // Avoid adding the product twice
-                // if it has already been restored.
                 if (
                     prevState.some(
                         (favorite) =>
@@ -244,8 +227,6 @@ export default function FavoritesPage() {
 
         } finally {
 
-          // Release the pending state regardless
-          // of whether the request succeeds or fails.
           setPendingFavoritePids(
               (prevState) => {
 
@@ -269,144 +250,166 @@ export default function FavoritesPage() {
         />
 
 
-        <Container className="py-4">
+        <main className="favorites-page">
 
-          {
-            // undefined means Firebase is still checking
-            // the current authentication state.
-            loginUser === undefined
-                ? (
-                    <div className="py-5 text-center">
-
-                      <Spinner
-                          animation="border"
-                      />
-
-                    </div>
-                )
+          <Container className="py-4">
 
 
-                // null means authentication checking has finished
-                // and no user is currently logged in.
-                : loginUser === null
-                    ? (
-                        <div className="py-5 text-center">
+            <div className="favorites-navigation">
 
-                          <h1>
-                            我的收藏
-                          </h1>
+              <Link
+                  to="/"
+                  className="btn favorites-back-button"
+              >
+                ← 繼續購物
+              </Link>
 
-
-                          <p className="mt-3">
-                            請先登入後查看你的收藏商品。
-                          </p>
+            </div>
 
 
-                          <Link
-                              to="/login"
-                              className="btn favorites-primary-button"
-                          >
-                            Login
-                          </Link>
+            {
+              loginUser === undefined
+                  ? (
+                      <div className="py-5 text-center">
 
-                        </div>
-                    )
+                        <Spinner
+                            animation="border"
+                        />
 
-
-                    : isLoading
-                        ? (
-                            <div className="py-5 text-center">
-
-                              <Spinner
-                                  animation="border"
-                              />
-
-                            </div>
-                        )
+                      </div>
+                  )
 
 
-                        : (
-                            <>
-                              <h1 className="mb-4">
-                                我的收藏
-                              </h1>
+                  : loginUser === null
+                      ? (
+                          <div className="py-5 text-center">
+
+                            <h1>
+                              我的收藏
+                            </h1>
 
 
-                              {
-                                favoriteDtoList.length === 0
-                                    ? (
-                                        <div className="text-center py-5">
-
-                                          <h4>
-                                            你暫時未有收藏商品
-                                          </h4>
+                            <p className="mt-3">
+                              請先登入後查看你的收藏商品。
+                            </p>
 
 
-                                          <p>
-                                            返回商品頁按 ♡ 收藏你喜歡的商品。
-                                          </p>
+                            <Link
+                                to="/login"
+                                className="btn favorites-primary-button"
+                            >
+                              Login
+                            </Link>
+
+                          </div>
+                      )
 
 
-                                          <Link
-                                              to="/"
-                                              className="btn favorites-primary-button"
-                                          >
-                                            瀏覽商品
-                                          </Link>
+                      : isLoading
+                          ? (
+                              <div className="py-5 text-center">
 
-                                        </div>
-                                    )
+                                <Spinner
+                                    animation="border"
+                                />
+
+                              </div>
+                          )
 
 
-                                    : (
-                                        <Row>
+                          : (
+                              <>
 
-                                          {
-                                            favoriteDtoList.map(
-                                                (dto) => (
+                                <div className="favorites-header">
 
-                                                    <Col
-                                                        key={dto.pid}
-                                                        className="d-flex my-2"
-                                                        xs={12}
-                                                        md={6}
-                                                        lg={4}
-                                                        xl={3}
-                                                    >
+                                  <h1 className="mb-1">
+                                    我的收藏
+                                  </h1>
 
-                                                      {/* FavoritesPage reuses the same ProductCard
-                                                          component as the homepage. Every product
-                                                          on this page starts in the favorite state. */}
-                                                      <ProductCard
-                                                          dto={dto}
-                                                          isFavorite={
-                                                            true
-                                                          }
-                                                          isFavoriteUpdating={
-                                                            pendingFavoritePids.has(
-                                                                dto.pid
-                                                            )
-                                                          }
-                                                          onToggleFavorite={
-                                                            handleRemoveFavorite
-                                                          }
-                                                      />
 
-                                                    </Col>
+                                  <p className="text-muted mb-4">
+                                    {
+                                      favoriteDtoList.length
+                                    } 件收藏商品
+                                  </p>
 
-                                                )
-                                            )
-                                          }
+                                </div>
 
-                                        </Row>
-                                    )
-                              }
 
-                            </>
-                        )
-          }
+                                {
+                                  favoriteDtoList.length === 0
+                                      ? (
+                                          <div className="text-center py-5">
 
-        </Container>
+                                            <h4>
+                                              你暫時未有收藏商品
+                                            </h4>
+
+
+                                            <p>
+                                              返回商品頁按 ♡ 收藏你喜歡的商品。
+                                            </p>
+
+
+                                            <Link
+                                                to="/"
+                                                className="btn favorites-primary-button"
+                                            >
+                                              瀏覽商品
+                                            </Link>
+
+                                          </div>
+                                      )
+
+
+                                      : (
+                                          <Row>
+
+                                            {
+                                              favoriteDtoList.map(
+                                                  (dto) => (
+
+                                                      <Col
+                                                          key={dto.pid}
+                                                          className="d-flex my-2"
+                                                          xs={12}
+                                                          md={6}
+                                                          lg={4}
+                                                          xl={3}
+                                                      >
+
+                                                        <ProductCard
+                                                            dto={dto}
+                                                            isFavorite={
+                                                              true
+                                                            }
+                                                            isFavoriteUpdating={
+                                                              pendingFavoritePids.has(
+                                                                  dto.pid
+                                                              )
+                                                            }
+                                                            onToggleFavorite={
+                                                              handleRemoveFavorite
+                                                            }
+                                                        />
+
+                                                      </Col>
+
+                                                  )
+                                              )
+                                            }
+
+                                          </Row>
+                                      )
+                                }
+
+                              </>
+                          )
+            }
+
+          </Container>
+
+        </main>
       </>
   );
 }

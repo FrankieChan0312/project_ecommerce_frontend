@@ -28,3 +28,37 @@
 .favorites-primary-button:focus {
     box-shadow: 0 0 0 3px rgba(103, 128, 58, 0.18) !important;
 }
+/* =========================
+   Continue Shopping
+   ========================= */
+
+.favorites-navigation {
+    margin-bottom: 20px;
+}
+
+.favorites-back-button {
+    padding: 8px 16px !important;
+
+    color: var(--grocery-green) !important;
+    background-color: transparent !important;
+
+    border: 1px solid var(--grocery-green) !important;
+    border-radius: 8px !important;
+
+    font-weight: 700 !important;
+
+    text-decoration: none;
+
+    transition:
+            background-color 0.18s ease,
+            color 0.18s ease,
+            transform 0.18s ease;
+}
+
+.favorites-back-button:hover {
+    color: #ffffff !important;
+    background-color: var(--grocery-green) !important;
+    border-color: var(--grocery-green) !important;
+
+    transform: translateX(-2px);
+}

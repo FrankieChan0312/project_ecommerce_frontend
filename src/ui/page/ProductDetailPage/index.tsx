@@ -1,8 +1,7 @@
 import {
   Alert,
   Button,
-  Container,
-  Stack
+  Container
 } from "react-bootstrap";
 
 import {
@@ -63,8 +62,6 @@ export default function ProductDetailPage() {
       useState(true);
 
 
-  // Display a temporary warning when the backend rejects
-  // the requested quantity because the available stock has changed.
   const [
     quantityIsExceedStock,
     setQuantityIsExceedStock
@@ -72,10 +69,9 @@ export default function ProductDetailPage() {
       useState(false);
 
 
-  // These states provide feedback while an add-to-cart
-  // request is running and immediately after it succeeds.
   const [isAddingToCart, setIsAddingToCart] =
       useState(false);
+
 
   const [addToCartSuccess, setAddToCartSuccess] =
       useState(false);
@@ -101,7 +97,6 @@ export default function ProductDetailPage() {
 
   const handleQuantityMinusOne = () => {
 
-    // Cart quantity cannot fall below one.
     if (quantity > 1) {
 
       setQuantity(
@@ -116,8 +111,6 @@ export default function ProductDetailPage() {
 
   const handleQuantityPlusOne = () => {
 
-    // Prevent the selector from increasing beyond
-    // the stock value returned by the product-detail API.
     if (
         productDto &&
         quantity < productDto.stock
@@ -135,8 +128,8 @@ export default function ProductDetailPage() {
 
   const handlePutCartItem = async () => {
 
-    // null means Firebase has confirmed that no user is logged in.
-    // Redirect unauthenticated users before calling the protected cart API.
+    // Redirect unauthenticated users before calling
+    // the protected shopping-cart API.
     if (loginUser === null) {
 
       void navigate({
@@ -147,8 +140,6 @@ export default function ProductDetailPage() {
     }
 
 
-    // undefined means authentication is still loading.
-    // Product data must also exist before an add-to-cart request can be sent.
     if (!loginUser || !productDto) {
       return;
     }
@@ -161,25 +152,22 @@ export default function ProductDetailPage() {
 
 
       // PUT adds the selected quantity to any quantity
-      // already stored for this product in the user's cart.
+      // already stored for this product in the cart.
       await putCartItem(
           productDto.pid,
           quantity
       );
 
 
-      // Synchronize the global navbar badge after
-      // the backend cart has been successfully updated.
+      // Synchronize the navbar cart badge after
+      // the backend cart has been updated.
       await cartContext
           ?.refreshCartItemCount();
 
 
-      setIsAddingToCart(false);
       setAddToCartSuccess(true);
 
 
-      // Keep the success state visible briefly before
-      // returning the button to its normal appearance.
       setTimeout(
           () => {
             setAddToCartSuccess(false);
@@ -189,11 +177,8 @@ export default function ProductDetailPage() {
 
     } catch (err) {
 
-      setIsAddingToCart(false);
-
-
-      // HTTP 400 represents a business validation failure,
-      // such as stock becoming insufficient since the page was loaded.
+      // HTTP 400 may occur when stock has changed
+      // since the product page was loaded.
       if (
           err instanceof AxiosError &&
           err.response?.status === 400
@@ -211,27 +196,28 @@ export default function ProductDetailPage() {
 
       } else {
 
-        // Unexpected API failures are handled by the common error page.
         void navigate({
           to: "/error"
         });
       }
+
+    } finally {
+
+      setIsAddingToCart(false);
     }
   };
 
 
   const renderAddToCartButton = () => {
 
-    // Use one button location for normal, loading and success states
-    // so the layout does not jump while the request is processed.
     if (isAddingToCart) {
 
       return (
           <Button
-              className="ms-2 product-detail-cart-button"
+              className="product-detail-cart-button"
               disabled
           >
-            幫緊你!
+            正在加入...
           </Button>
       );
     }
@@ -241,10 +227,10 @@ export default function ProductDetailPage() {
 
       return (
           <Button
-              className="ms-2 product-detail-cart-button"
+              className="product-detail-cart-button"
               disabled
           >
-            成功了!
+            ✓ 已加入購物車
           </Button>
       );
     }
@@ -252,8 +238,10 @@ export default function ProductDetailPage() {
 
     return (
         <Button
-            className="ms-2 product-detail-cart-button"
-            onClick={handlePutCartItem}
+            className="product-detail-cart-button"
+            onClick={() => {
+              void handlePutCartItem();
+            }}
         >
           加入購物車
         </Button>
@@ -263,32 +251,36 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
 
-    const fetchProduct = async () => {
+    const fetchProduct =
+        async () => {
 
-      setIsLoading(true);
+          setIsLoading(true);
 
-      try {
 
-        // Reload product details whenever the product ID
-        // in the route changes.
-        const responseData =
-            await getProductByPid(
-                productId
+          try {
+
+            const responseData =
+                await getProductByPid(
+                    productId
+                );
+
+            setProductDto(
+                responseData
             );
 
-        setProductDto(responseData);
 
-      } catch {
+          } catch {
 
-        void navigate({
-          to: "/error"
-        });
+            void navigate({
+              to: "/error"
+            });
 
-      } finally {
 
-        setIsLoading(false);
-      }
-    };
+          } finally {
+
+            setIsLoading(false);
+          }
+        };
 
 
     void fetchProduct();
@@ -301,89 +293,182 @@ export default function ProductDetailPage() {
 
   return (
       <>
-        <TopNavBar/>
+        <TopNavBar
+            showSearch={false}
+        />
 
 
         {
           productDto && !isLoading
               ? (
-                  <Container>
+                  <main className="product-detail-page">
 
-                    <img
-                        style={{
-                          height: "300px"
-                        }}
-                        src={productDto.imageUrl}
-                        alt={productDto.name}
-                    />
+                    <Container>
 
 
-                    <h3>
-                      {productDto.name}
-                    </h3>
+                      <Button
+                          className="product-detail-back-button"
+                          onClick={() => {
+                            void navigate({
+                              to: "/"
+                            });
+                          }}
+                      >
+                        ← 返回商品列表
+                      </Button>
 
 
-                    <h5
-                        style={{
-                          whiteSpace: "pre-line"
-                        }}
-                    >
-                      {productDto.description}
-                    </h5>
+                      <div className="product-detail-card">
 
 
-                    <Stack direction="horizontal">
+                        <div className="product-detail-image-section">
 
-                      {
-                        // Quantity controls and cart actions are available
-                        // only while the product has stock.
-                        productDto.stock > 0
-                            ? (
-                                <>
-                                  <QuantitySelector
-                                      quantity={quantity}
-                                      handleQuantityMinusOne={
-                                        handleQuantityMinusOne
-                                      }
-                                      handleQuantityPlusOne={
-                                        handleQuantityPlusOne
-                                      }
-                                      stock={
-                                        productDto.stock
-                                      }
-                                  />
+                          <img
+                              className="product-detail-image"
+                              src={productDto.imageUrl}
+                              alt={productDto.name}
+                          />
 
-                                  {renderAddToCartButton()}
-                                </>
-                            )
-
-                            : (
-                                <Button
-                                    variant="danger"
-                                    disabled
-                                    className="ms-2"
-                                >
-                                  售罄!
-                                </Button>
-                            )
-                      }
-
-                    </Stack>
+                        </div>
 
 
-                    {
-                        quantityIsExceedStock && (
-                            <Alert
-                                variant="danger"
-                                className="my-3 w-50"
-                            >
-                              The quantity is exceeding stock,
-                              please try again.
-                            </Alert>
-                        )
-                    }
+                        <section className="product-detail-info">
 
-                  </Container>
+
+                          {
+                              productDto.categoryName && (
+
+                                  <div className="product-detail-category">
+                                    {productDto.categoryName}
+                                  </div>
+
+                              )
+                          }
+
+
+                          <h1 className="product-detail-name">
+                            {productDto.name}
+                          </h1>
+
+
+                          {
+                              productDto.origin && (
+
+                                  <div className="product-detail-origin">
+                                    產地：{productDto.origin}
+                                  </div>
+
+                              )
+                          }
+
+
+                          <div className="product-detail-price">
+                            HK$
+                            {
+                              productDto.price
+                                  .toFixed(2)
+                            }
+                          </div>
+
+
+                          <div
+                              className={
+                                productDto.stock > 0
+                                    ? "product-detail-stock in-stock"
+                                    : "product-detail-stock out-of-stock"
+                              }
+                          >
+
+                            {
+                              productDto.stock > 0
+                                  ? `● 有貨 · 尚有 ${productDto.stock} 件`
+                                  : "● 暫時售罄"
+                            }
+
+                          </div>
+
+
+                          <hr className="product-detail-divider"/>
+
+
+                          <div className="product-detail-description">
+
+                            <h2>
+                              商品介紹
+                            </h2>
+
+
+                            <p>
+                              {productDto.description}
+                            </p>
+
+                          </div>
+
+
+                          {
+                            productDto.stock > 0
+                                ? (
+                                    <div className="product-detail-actions">
+
+                                      <QuantitySelector
+                                          quantity={
+                                            quantity
+                                          }
+                                          handleQuantityMinusOne={
+                                            handleQuantityMinusOne
+                                          }
+                                          handleQuantityPlusOne={
+                                            handleQuantityPlusOne
+                                          }
+                                          stock={
+                                            productDto.stock
+                                          }
+                                      />
+
+
+                                      {renderAddToCartButton()}
+
+                                    </div>
+                                )
+
+                                : (
+                                    <Button
+                                        variant="danger"
+                                        disabled
+                                        className="product-detail-sold-out-button"
+                                    >
+                                      暫時售罄
+                                    </Button>
+                                )
+                          }
+
+
+                          {
+                              quantityIsExceedStock && (
+
+                                  <Alert
+                                      variant="danger"
+                                      className="product-detail-alert"
+                                  >
+                                    庫存數量已更新，請重新選擇購買數量。
+                                  </Alert>
+
+                              )
+                          }
+
+
+                          <div className="product-detail-delivery-note">
+                            滿 HK$500 免費送貨
+                          </div>
+
+
+                        </section>
+
+                      </div>
+
+                    </Container>
+
+                  </main>
               )
 
               : (

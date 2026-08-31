@@ -4,14 +4,12 @@ import type {
   TransactionDto
 } from "../data/transaction/transaction.type.ts";
 
-import {
-  baseUrl
-} from "./productApi.ts";
 
 import {
   getAuthConfig
 } from "../authService/firebaseAuthService.ts";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 // All transaction endpoints require Firebase authentication.
 // getAuthConfig() attaches the current user's Bearer token

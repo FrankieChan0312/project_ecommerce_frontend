@@ -1,0 +1,22 @@
+{
+  "tid": 5,
+  "buyerUid": 1,
+  "dateTime": "20260725T22:09:39",
+  "transactionStatus": "SUCCESS",
+  "total": 200.00,
+  "items": [
+    {
+      "tpid": 7,
+      "product": {
+      "pid": 9,
+      "name": "Milk",
+      "description": "From New Zealand",
+      "imageUrl": "https://placehold.co/600x400?text=Milk",
+      "price": 25.00,
+      "stock": 200
+    },
+      "quantity": 8,
+      "subtotal": 200.00
+    }
+  ]
+}

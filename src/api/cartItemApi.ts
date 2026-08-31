@@ -4,14 +4,13 @@ import {
   getAuthConfig
 } from "../authService/firebaseAuthService.ts";
 
-import {
-  baseUrl
-} from "./productApi.ts";
+
 
 import type {
   CartItemDto
 } from "../data/cartItem/cartItem.type.ts";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 // All cart endpoints require Firebase authentication.
 // getAuthConfig() attaches the current user's Bearer token

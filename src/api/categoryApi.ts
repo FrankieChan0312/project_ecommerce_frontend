@@ -4,9 +4,7 @@ import type {
   CategoryDto
 } from "../data/category/category.type.ts";
 
-import {
-  baseUrl
-} from "./productApi.ts";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 
 export async function getAllCategories() {

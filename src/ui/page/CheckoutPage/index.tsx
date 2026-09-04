@@ -3,7 +3,8 @@ import {
   Container
 } from "react-bootstrap";
 
-import CheckoutTable from "./component/CheckoutTable.tsx";
+import CheckoutTable
+  from "./component/CheckoutTable.tsx";
 
 import {
   useNavigate,
@@ -20,21 +21,19 @@ import {
   LoginUserContext
 } from "../../../context/LoginUserContext.tsx";
 
-import {
-  CartContext
-} from "../../../context/CartContext.tsx";
-
 import type {
   TransactionDto
 } from "../../../data/transaction/transaction.type.ts";
 
-import LoadingContainer from "../../component/LoadingContainer.tsx";
-import TopNavBar from "../../component/TopNavBar.tsx";
+import LoadingContainer
+  from "../../component/LoadingContainer.tsx";
+
+import TopNavBar
+  from "../../component/TopNavBar.tsx";
 
 import {
-  finishTransaction,
-  getTransaction,
-  processTransaction
+  createStripeCheckout,
+  getTransaction
 } from "../../../api/transactionApi.ts";
 
 import "./CheckoutPage.css";
@@ -47,6 +46,7 @@ export default function CheckoutPage() {
         from: "/checkout/$tid"
       });
 
+
   const {tid} =
       useParams({
         from: "/checkout/$tid"
@@ -56,17 +56,19 @@ export default function CheckoutPage() {
   const loginUser =
       useContext(LoginUserContext);
 
-  const cartContext =
-      useContext(CartContext);
 
-
-  const [transactionDto, setTransactionDto] =
+  const [
+    transactionDto,
+    setTransactionDto
+  ] =
       useState<TransactionDto | undefined>(
           undefined
       );
 
+
   const [isLoading, setIsLoading] =
       useState(true);
+
 
   const [isCheckout, setIsCheckout] =
       useState(false);
@@ -88,13 +90,17 @@ export default function CheckoutPage() {
               // Load the transaction using both the transaction ID
               // and the authenticated Firebase user.
               const responseData =
-                  await getTransaction(tid);
+                  await getTransaction(
+                      tid
+                  );
 
               setTransactionDto(
                   responseData
               );
 
-            } else if (loginUser === null) {
+            } else if (
+                loginUser === null
+            ) {
 
               // Redirect only after Firebase has confirmed
               // that no user is currently authenticated.
@@ -126,7 +132,7 @@ export default function CheckoutPage() {
 
 
   // =========================
-  // Complete checkout
+  // Stripe Checkout
   // =========================
 
   const handleCheckout =
@@ -134,46 +140,36 @@ export default function CheckoutPage() {
 
         setIsCheckout(true);
 
+
         try {
 
-          // Step 1:
-          // Move the transaction from PREPARE to PROCESSING.
-          await processTransaction(
-              tid
+          // The backend creates the Stripe Checkout Session
+          // using the transaction snapshot stored in MySQL.
+          //
+          // The browser never sends or controls the payment amount.
+          const stripeCheckout =
+              await createStripeCheckout(
+                  tid
+              );
+
+
+          // Leave Frankie’s Grocery temporarily and open
+          // Stripe's hosted payment page.
+          //
+          // Stripe will redirect the customer back to the
+          // configured success or cancel URL afterwards.
+          window.location.assign(
+              stripeCheckout.checkoutUrl
           );
-
-
-          // Step 2:
-          // Complete the transaction.
-          // The backend re-checks stock, deducts inventory,
-          // changes the status to SUCCESS and clears the cart.
-          await finishTransaction(
-              tid
-          );
-
-
-          // The backend cart is now empty, so refresh
-          // the global navbar cart badge.
-          await cartContext
-              ?.refreshCartItemCount();
-
-
-          // The complete checkout flow has succeeded.
-          void navigate({
-            to: "/thankyou"
-          });
 
         } catch {
 
-          // Any failed step prevents the frontend from
-          // showing the successful Thank You page.
+          setIsCheckout(false);
+
+
           void navigate({
             to: "/error"
           });
-
-        } finally {
-
-          setIsCheckout(false);
         }
       };
 
@@ -201,12 +197,9 @@ export default function CheckoutPage() {
   ) => {
 
     // The backend transaction total already includes delivery.
-    // Therefore:
     //
-    // shipping fee = transaction total - merchandise subtotal
-    //
-    // This keeps the backend as the final authority
-    // for the amount charged.
+    // shipping fee =
+    // transaction total - merchandise subtotal
     return dto.total
         - calSubtotal(dto);
   };
@@ -241,6 +234,7 @@ export default function CheckoutPage() {
                 結賬
               </h1>
 
+
               <p className="checkout-subtitle">
                 請確認商品及金額後完成付款
               </p>
@@ -250,132 +244,157 @@ export default function CheckoutPage() {
 
             {
               transactionDto &&
-              !isLoading ? (
+              !isLoading
+                  ? (
 
-                  <div className="checkout-layout">
-
-                    <section className="checkout-table-section">
-
-                      <div className="checkout-section-heading">
-
-                        <h2>
-                          訂單商品
-                        </h2>
-
-                        <span>
-                          {transactionDto.items.length} 件商品
-                        </span>
-
-                      </div>
+                      <div className="checkout-layout">
 
 
-                      <CheckoutTable
-                          transactionDto={
-                            transactionDto
-                          }
-                      />
+                        <section className="checkout-table-section">
 
-                    </section>
+                          <div className="checkout-section-heading">
 
-
-                    <aside className="checkout-summary">
-
-                      <h3 className="checkout-summary-title">
-                        賬單總覽
-                      </h3>
+                            <h2>
+                              訂單商品
+                            </h2>
 
 
-                      <div className="checkout-summary-row">
+                            <span>
+                              {
+                                transactionDto
+                                    .items
+                                    .length
+                              } 件商品
+                            </span>
 
-                        <span>
-                          商品總額
-                        </span>
-
-                        <span>
-                          HK${subtotal.toLocaleString()}
-                        </span>
-
-                      </div>
+                          </div>
 
 
-                      <div className="checkout-summary-row">
+                          <CheckoutTable
+                              transactionDto={
+                                transactionDto
+                              }
+                          />
 
-                        <span>
-                          運費
-                        </span>
+                        </section>
 
-                        <span
-                            className={
-                              shippingFee === 0
-                                  ? "checkout-free-shipping"
-                                  : ""
+
+                        <aside className="checkout-summary">
+
+                          <h3 className="checkout-summary-title">
+                            賬單總覽
+                          </h3>
+
+
+                          <div className="checkout-summary-row">
+
+                            <span>
+                              商品總額
+                            </span>
+
+
+                            <span>
+                              HK$
+                              {
+                                subtotal
+                                    .toLocaleString()
+                              }
+                            </span>
+
+                          </div>
+
+
+                          <div className="checkout-summary-row">
+
+                            <span>
+                              運費
+                            </span>
+
+
+                            <span
+                                className={
+                                  shippingFee === 0
+                                      ? "checkout-free-shipping"
+                                      : ""
+                                }
+                            >
+
+                              {
+                                shippingFee === 0
+                                    ? "免費"
+                                    : `HK$${shippingFee.toLocaleString()}`
+                              }
+
+                            </span>
+
+                          </div>
+
+
+                          <div className="checkout-shipping-note">
+                            滿 HK$500 免費送貨
+                          </div>
+
+
+                          <hr/>
+
+
+                          <div className="checkout-total">
+
+                            <span>
+                              Total
+                            </span>
+
+
+                            <span>
+                              HK$
+                              {
+                                transactionDto
+                                    .total
+                                    .toLocaleString()
+                              }
+                            </span>
+
+                          </div>
+
+
+                          <Button
+                              className="checkout-pay-button"
+                              onClick={() => {
+                                void handleCheckout();
+                              }}
+                              disabled={
+                                isCheckout
+                              }
+                          >
+
+                            {
+                              isCheckout
+                                  ? "正在前往 Stripe..."
+                                  : "使用 Stripe 付款"
                             }
-                        >
-                          {
-                            shippingFee === 0
-                                ? "免費"
-                                : `HK$${shippingFee.toLocaleString()}`
-                          }
-                        </span>
+
+                          </Button>
+
+
+                          <p className="checkout-secure-text">
+                            付款將透過 Stripe 安全處理
+                          </p>
+
+                        </aside>
 
                       </div>
 
+                  )
 
-                      <div className="checkout-shipping-note">
-                        滿 HK$500 免費送貨
-                      </div>
+                  : (
 
+                      <div className="checkout-loading">
 
-                      <hr/>
-
-
-                      <div className="checkout-total">
-
-                        <span>
-                          Total
-                        </span>
-
-                        <span>
-                          HK${transactionDto.total.toLocaleString()}
-                        </span>
+                        <LoadingContainer/>
 
                       </div>
 
-
-                      <Button
-                          className="checkout-pay-button"
-                          onClick={() => {
-                            void handleCheckout();
-                          }}
-                          disabled={
-                            isCheckout
-                          }
-                      >
-                        {
-                          isCheckout
-                              ? "正在處理..."
-                              : "確認付款"
-                        }
-                      </Button>
-
-
-                      <p className="checkout-secure-text">
-                        完成付款後將確認訂單並更新庫存
-                      </p>
-
-                    </aside>
-
-                  </div>
-
-              ) : (
-
-                  <div className="checkout-loading">
-
-                    <LoadingContainer/>
-
-                  </div>
-
-              )
+                  )
             }
 
           </Container>

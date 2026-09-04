@@ -4,16 +4,51 @@ import type {
   TransactionDto
 } from "../data/transaction/transaction.type.ts";
 
-
 import {
   getAuthConfig
 } from "../authService/firebaseAuthService.ts";
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+const baseUrl =
+    import.meta.env.VITE_API_BASE_URL;
+
+
+export interface StripeCheckoutResponse {
+  checkoutUrl: string;
+}
+
+
+// =========================
+// Stripe Checkout
+// =========================
+
+export async function createStripeCheckout(
+    tid: string
+) {
+
+  // Ask the backend to create a Stripe-hosted Checkout Session.
+  //
+  // The frontend sends only the transaction ID.
+  // Product prices, quantities and the final amount are determined
+  // by the backend transaction snapshot.
+  const response =
+      await axios.post<StripeCheckoutResponse>(
+          `${baseUrl}/transactions/${tid}/stripe-checkout`,
+          null,
+          await getAuthConfig()
+      );
+
+  return response.data;
+}
+
+
+// =========================
+// Transaction
+// =========================
 
 // All transaction endpoints require Firebase authentication.
 // getAuthConfig() attaches the current user's Bearer token
-// to each request.
+// to each protected request.
 export async function getTransaction(
     tid: string
 ) {
@@ -46,17 +81,21 @@ export async function postTransaction() {
 }
 
 
+// =========================
+// Legacy checkout endpoints
+// =========================
+
+// These two functions are temporarily kept while Stripe
+// integration is being completed.
+//
+// The CheckoutPage no longer calls them.
+// Stripe will eventually confirm SUCCESS through a webhook.
 export async function processTransaction(
     tid: string
 ) {
 
-  // Start payment processing by moving the transaction
-  // from PREPARE to PROCESSING.
-  //
-  // The backend responds with HTTP 204 No Content because
-  // this request only changes the transaction status.
   const response =
-      await axios.patch<TransactionDto>(
+      await axios.patch<void>(
           `${baseUrl}/transactions/${tid}/payment`,
           null,
           await getAuthConfig()
@@ -70,9 +109,6 @@ export async function finishTransaction(
     tid: string
 ) {
 
-  // Complete a PROCESSING transaction.
-  // The backend re-checks and deducts stock, changes the status
-  // to SUCCESS and clears the authenticated user's cart.
   const response =
       await axios.patch<TransactionDto>(
           `${baseUrl}/transactions/${tid}/success`,
